@@ -37,7 +37,7 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
-  if ((chdir("/")) < 0) {
+  if ((chdir(".")) < 0) {
     exit(EXIT_FAILURE);
   }
 
@@ -48,22 +48,28 @@ int main() {
   while(1) {
     // main program here
 	struct dirent *entry;
-	DIR *dir;	
+	DIR *dir = opendir(".") ;	
 	char file1[255];
 	char file2[255];
 	if(dir == NULL){
-		printf("Tidak ada file");
 		exit(1);
 	}
-	while(entry = readdir (dir)){
+	while((entry = readdir (dir))!=NULL){
 	strcpy(file1,entry->d_name);
-	if(substrfinder(file1, ".png")){
+	if(strstr(&file1[strlen(file1)-4], ".png")){
+		char file3[65] = {0};
+		memset(file3, 0, sizeof(file3));
+		memset(file2,0, sizeof(file2));
+		strcpy(file3, "/home/kyielas/modul2/gambar/");
 		strncpy(file2,file1, strlen(file1)-4);
 		strcat(file2,"_grey.png");
-		rename(strcat(".",file1),strcat("/home/kyielas/modul2/gambar",file2));
+		strcat(file3,file2);
+		rename(file1,file3);
 		}
+	
 	}
-	sleep(20);
+	sleep(10);
   }
+
   exit(EXIT_SUCCESS);
 }
