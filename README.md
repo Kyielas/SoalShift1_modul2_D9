@@ -73,6 +73,45 @@ while(1) {
     sleep(3);                                                       //membuat program bekerja setiap 3 detik
   }
 ```
+# Soal No. 3
+Diberikan file campur2.zip. Di dalam file tersebut terdapat folder “campur2”. 
+Buatlah program C yang dapat :
+i)  mengekstrak file zip tersebut.
+ii) menyimpan daftar file dari folder “campur2” yang memiliki ekstensi .txt ke dalam file daftar.txt. 
+Catatan:  
+- Gunakan fork dan exec.
+- Gunakan minimal 3 proses yang diakhiri dengan exec.
+- Gunakan pipe
+- Pastikan file daftar.txt dapat diakses dari text editor
+
+### Jawab
+Pertama saya mendownload campur2.zip 
+Setelah itumelakukan fork sebanyak 4 kali untuk mendapatkan 3 child dan 1 parent dari tiap child itu melaksanakan fungsi-fungsi sebagai berikut(secara berurutan) 
+**Unzip**
+```c
+char *unzip[5] = {"unzip", "/home/kyielas/modul2/campur2.zip","-d","/home/kyielas/modul2/", NULL};
+execvp("unzip", unzip)						     // Meng-unzip file campur2.zip
+```
+**Touch**
+```c
+char *touch[3] = {"touch", "/home/kyielas/modul2/daftar.txt", NULL}; // Membuat file Daftar.txt
+execvp("touch", touch)
+```
+**List**
+```c
+char *ls[3] = {"ls", "/home/kyielas/modul2/campur2", NULL};          // Menselect file didalam directory campur2
+execvp("touch", touch)
+```
+**Grep**
+```c
+char *grep[3] = {"ls", "/home/kyielas/modul2/campur2", NULL};        // Mengambil isi dari yang didapati oleh list
+execvp("grep", grep)
+```
+lalu dengan bantuan command dup2 dan pipe dapat didapatkan hasil dari dapat menyambungkan antara List dan Grep
+Command | Description 
+--- | --- 
+dup2 | System Call untuk mensalin file descriptor
+pipe | System Call untuk menyambungi dua proses
 
 ## Soal No. 4
 Dalam direktori /home/[user]/Documents/makanan terdapat file makan_enak.txt yang berisikan daftar makanan terkenal di Surabaya. Elen sedang melakukan diet dan seringkali tergiur untuk membaca isi makan_enak.txt karena ngidam makanan enak. Sebagai teman yang baik, Anda membantu Elen dengan membuat program C yang berjalan setiap 5 detik untuk memeriksa apakah file makan_enak.txt pernah dibuka setidaknya 30 detik yang lalu (rentang 0 - 30 detik).
