@@ -56,7 +56,6 @@ int main() {
 	chmod("/home/ivan/Sisop/Praktikum2/hatiku/elen.ku", 0777);
 	
 	if(strcmp(pwd->pw_name, "www-data")==0 && strcmp(grp->gr_name, "www-data")==0) {
-			printf("%s %s\n", pwd->pw_name, grp->gr_name);
 			char *argv[3] = {"rm", "/home/ivan/Sisop/Praktikum2/hatiku/elen.ku", NULL};
 	    	execv("/bin/rm", argv);
 		

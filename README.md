@@ -34,3 +34,42 @@ while((entry = readdir (dir))!=NULL){
   }
 }
 ```
+
+## Soal No. 2
+Pada suatu hari Kusuma dicampakkan oleh Elen karena Elen dimenangkan oleh orang lain. Semua kenangan tentang Elen berada pada file bernama “elen.ku” pada direktori “hatiku”. Karena sedih berkepanjangan, tugas kalian sebagai teman Kusuma adalah membantunya untuk menghapus semua kenangan tentang Elen dengan membuat program C yang bisa mendeteksi owner dan group dan menghapus file “elen.ku” setiap 3 detik dengan syarat ketika owner dan grupnya menjadi “www-data”. Ternyata kamu memiliki kendala karena permission pada file “elen.ku”. Jadi, ubahlah permissionnya menjadi 777. Setelah kenangan tentang Elen terhapus, maka Kusuma bisa move on.
+Catatan: Tidak boleh menggunakan crontab
+
+### Jawab
+
+Untuk mengecek siapakah owner dan group dari file elen.ku yang sudah dibuat, maka dibutuhkan sebuah fungsi yang dapat digunakan untuk melihatnya. Untuk itu, maka digunakanlah perintah berikut.
+
+Command | Description 
+--- | -----
+``` getpwuid() ``` | sebuah perintah yang digunakan untuk mengecek User ID
+``` getgrgid() ``` | sebuah perintah yang digunakan untuk mengecek Group ID
+
+Main program dari file tersebut dapat dilihat seperti berikut.
+
+```c
+while(1) {
+    struct passwd *pwd;
+	struct group *grp;
+	struct stat fileinfo;
+
+	pid_t child_id;
+	int status;
+	
+	stat("/home/ivan/Sisop/Praktikum2/hatiku/elen.ku", &fileinfo);
+	pwd=getpwuid(fileinfo.st_uid);                                  //mengecek owner
+	grp=getgrgid(fileinfo.st_gid);                                  //mengecek group
+	
+	chmod("/home/ivan/Sisop/Praktikum2/hatiku/elen.ku", 0777);      //mengubah permission
+	
+	if(strcmp(pwd->pw_name, "www-data")==0 && strcmp(grp->gr_name, "www-data")==0) {    //mengecek jika owner dan group == www-data
+			char *argv[3] = {"rm", "/home/ivan/Sisop/Praktikum2/hatiku/elen.ku", NULL};
+	    	execv("/bin/rm", argv);                                 //menghapus file elen.ku
+		
+	}
+    sleep(3);                                                       //membuat program bekerja setiap 3 detik
+  }
+```
